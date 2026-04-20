@@ -10,6 +10,8 @@ after completing
 `git commit -m "your name and what you have done"`
 `git push -u origin yourname`
 
+ask if any quries.
+
 
 
 Dipak Biahwakarma -> auth folder, main folder, features ->clinic.html, from js folder -> statusBoard.js
