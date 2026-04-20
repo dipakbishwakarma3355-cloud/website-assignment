@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign Up - HealthWaze Local</title>
+  
+  <link rel="stylesheet" href="../../css/main.css" />
+  <style>
+    body {
+      background-color: var(--primary);
+      justify-content: center;
+      align-items: center;
+    }
+    .auth-card {
+      background: var(--white);
+      padding: 40px;
+      border-radius: 24px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: var(--shadow-lg);
+      margin: 20px;
+    }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; }
+    .full-btn { width: 100%; padding: 14px; font-size: 16px; }
+    .auth-links { margin-top: 24px; text-align: center; font-size: 14px; color: var(--text-muted); }
+    .auth-links a { color: var(--primary); font-weight: 700; }
+  </style>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div class="auth-card">
+    <div style="text-align: center; margin-bottom: 24px;">
+      <i data-lucide="activity" style="color: var(--primary); width: 40px; height: 40px;"></i>
+      <h1 style="font-size: 24px; font-weight: 800; margin-top: 10px;">Create Account</h1>
+    </div>
+
+    <form id="signupForm">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="name" class="input-field" required placeholder="John Doe" />
+      </div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" id="email" class="input-field" required placeholder="you@example.com" />
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="password" class="input-field" required placeholder="••••••••" />
+      </div>
+
+      <button type="submit" class="btn btn-primary full-btn">Create Account</button>
+    </form>
+
+    <div class="auth-links">
+      Already have an account? <a href="../auth/login.html">Log in</a>
+    </div>
+  </div>
+
+  <script src="../../js/auth.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      lucide.createIcons();
+      
+      const form = document.getElementById('signupForm');
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        // Mock sign up logic
+        Auth.login(email, 'patient');
+        window.location.href = '../main/index.html';
+      });
+    });
+  </script>
+</body>
+</html>

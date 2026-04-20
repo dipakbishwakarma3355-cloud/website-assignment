@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HealthWaze Local</title>
+  
+  <link rel="stylesheet" href="../../css/main.css" />
+  
+  <!-- CSS for the status board page specifics -->
+  <style>
+    .status-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .filters-card {
+      padding: 24px;
+      margin-bottom: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .search-wrapper {
+      position: relative;
+    }
+    .search-wrapper i {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+    .search-input {
+      padding-left: 48px;
+    }
+    .filter-pills {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+    }
+    .filter-pill {
+      padding: 10px 20px;
+      border-radius: 16px;
+      background: var(--bg-main);
+      color: var(--text-muted);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .filter-pill.active {
+      background: var(--primary);
+      color: var(--white);
+    }
+    
+    /* Update Card */
+    .update-card {
+      padding: 20px;
+      display: flex;
+      gap: 20px;
+      margin-bottom: 16px;
+      border: 2px solid transparent;
+      transition: all 0.2s;
+    }
+    .update-card.slot { border-color: var(--success); }
+    .update-indicator {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      margin-top: 6px;
+      flex-shrink: 0;
+    }
+    .indicator-success { background: var(--success); box-shadow: 0 0 0 4px var(--success-bg); }
+    .indicator-danger { background: var(--danger); box-shadow: 0 0 0 4px var(--danger-bg); }
+    .indicator-warning { background: var(--warning); box-shadow: 0 0 0 4px var(--warning-bg); }
+    
+    .update-content { flex: 1; }
+    .update-message {
+      background: var(--bg-main);
+      padding: 16px;
+      border-radius: 16px;
+      margin-top: 16px;
+    }
+    .update-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 16px;
+      min-width: 150px;
+      border-left: 1px solid var(--border-light);
+      padding-left: 20px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .badge-success { background: var(--success-bg); color: var(--success); }
+    .badge-danger { background: var(--danger-bg); color: var(--danger); }
+    .badge-warning { background: var(--warning-bg); color: var(--warning); }
+  </style>
+
+  <!-- External libraries -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Header injected by layout.js -->
+    <div id="layout-header"></div>
+    
+    <div class="main-grid">
+      <!-- Sidebar injected by layout.js -->
+      <div id="layout-sidebar"></div>
+      
+      <!-- Main Content Area -->
+      <main id="main-content">
+        <div class="status-header">
+          <div>
+            <h1 style="font-size: 20px; font-weight: 700; margin-bottom: 8px;">Community Status Board</h1>
+            <p style="color: var(--text-muted); font-size: 14px;">Live updates on GP availability and wait times in your area.</p>
+          </div>
+          <button class="btn btn-primary" onclick="alert('Report form coming soon in vanilla JS!')">
+            <i data-lucide="message-square" style="width: 16px; height: 16px;"></i> Report Status
+          </button>
+        </div>
+
+        <div class="card filters-card">
+          <div class="search-wrapper">
+            <i data-lucide="search" style="width: 20px; height: 20px;"></i>
+            <input type="text" id="searchInput" class="input-field search-input" placeholder="Search for your GP or clinic..." />
+          </div>
+          <div class="filter-pills" id="filterPills">
+            <button class="filter-pill active" data-filter="all">All Updates</button>
+            <button class="filter-pill" data-filter="slots">Slots</button>
+            <button class="filter-pill" data-filter="delays">Delays</button>
+            <button class="filter-pill" data-filter="verified">Verified</button>
+          </div>
+        </div>
+
+        <!-- Updates Feed -->
+        <div id="updatesFeed"></div>
+      </main>
+    </div>
+
+    <!-- Mobile Nav injected by layout.js -->
+    <div id="layout-mobile-nav"></div>
+  </div>
+
+  <script src="../../js/auth.js"></script>
+  <script src="../../js/mockData.js"></script>
+  <script src="../../js/layout.js"></script>
+  <script src="../../js/pages/statusBoard.js"></script>
+  <script>
+    // Initialize Page
+    document.addEventListener("DOMContentLoaded", () => {
+      if (!Auth.requireAuth(['patient'])) return;
+      Layout.renderPatientLayout('index');
+      StatusBoard.init();
+    });
+  </script>
+</body>
+</html>
