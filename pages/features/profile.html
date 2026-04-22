@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Profile - HealthWaze Local</title>
+  
+  <link rel="stylesheet" href="../../css/main.css" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <style>
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    
+    .profile-card {
+      background: var(--white);
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+      margin-bottom: 24px;
+    }
+    
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border-light);
+    }
+    
+    .avatar-lg {
+      width: 80px;
+      height: 80px;
+      background: var(--primary-bg);
+      color: var(--primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      font-weight: 800;
+    }
+    
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    
+    @media (max-width: 768px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+    
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+    
+    .toggle-row:last-child {
+      border-bottom: none;
+    }
+    
+    /* Custom Toggle Switch */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+    .switch input { 
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 24px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+      box-shadow: var(--shadow-sm);
+    }
+    input:checked + .slider {
+      background-color: var(--primary);
+    }
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <div id="layout-header"></div>
+    
+    <div class="main-grid">
+      <div id="layout-sidebar"></div>
+      
+      <main id="main-content">
+        
+        <div class="page-header">
+          <div>
+            <h1 style="font-size: 20px; font-weight: 700; margin-bottom: 4px;">Profile & Settings</h1>
+            <p style="color: var(--text-muted); font-size: 14px;">Manage your personal data and account preferences.</p>
+          </div>
+        </div>
+
+        <div class="profile-card">
+          <div class="profile-header">
+            <div class="avatar-lg" id="profileInitials">ME</div>
+            <div>
+              <h2 style="font-size: 24px; font-weight: 700;" id="displayName">Loading...</h2>
+              <p style="color: var(--text-muted); display: flex; align-items: center; gap: 6px; margin-top: 4px;">
+                NHS Number: <span style="font-family: monospace; font-weight: 700; color: var(--text-main);">123 456 7890</span>
+                <i data-lucide="shield-check" style="color: var(--success); width: 16px; height: 16px;"></i>
+              </p>
+            </div>
+          </div>
+          
+          <form id="profileForm">
+            <h3 class="section-title"><i data-lucide="user" style="width:18px; height: 18px;"></i> Personal Information</h3>
+            
+            <div class="form-grid" style="margin-bottom: 32px;">
+              <div class="form-group">
+                <label>First Name</label>
+                <input type="text" id="firstName" class="input-field" required />
+              </div>
+              <div class="form-group">
+                <label>Last Name</label>
+                <input type="text" id="lastName" class="input-field" required />
+              </div>
+              <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="email" class="input-field" required />
+              </div>
+              <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" id="phone" class="input-field" placeholder="e.g. 07700 900000" />
+              </div>
+            </div>
+
+            <h3 class="section-title"><i data-lucide="bell" style="width:18px; height: 18px;"></i> Notification Preferences</h3>
+            <div style="margin-bottom: 40px;">
+              <div class="toggle-row">
+                <div>
+                  <div style="font-weight: 600;">Email Alerts</div>
+                  <div style="font-size: 13px; color: var(--text-muted);">Receive booking confirmations via email.</div>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="prefEmail" checked>
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <div class="toggle-row">
+                <div>
+                  <div style="font-weight: 600;">SMS Notifications</div>
+                  <div style="font-size: 13px; color: var(--text-muted);">Get text reminders before your appointments.</div>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="prefSMS">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 16px; border-top: 1px solid var(--border-light); padding-top: 24px;">
+              <button type="submit" class="btn btn-primary" id="saveBtn">Save Changes</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="profile-card">
+          <h3 class="section-title"><i data-lucide="file-text" style="width:18px; height: 18px;"></i> Medical History</h3>
+          <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px;">
+            <div style="padding: 16px; background: var(--bg-main); border-radius: 12px;">
+              <div style="font-weight: 700; display: flex; justify-content: space-between;">
+                <span>Asthma</span>
+                <span style="color: var(--text-muted); font-size: 13px;">Diagnosed: 2015</span>
+              </div>
+              <p style="color: var(--text-muted); font-size: 14px; margin-top: 4px;">Ongoing management. Need inhaler prescriptions renewed bi-monthly.</p>
+            </div>
+            <div style="padding: 16px; background: var(--bg-main); border-radius: 12px;">
+              <div style="font-weight: 700; display: flex; justify-content: space-between;">
+                <span>Penicillin Allergy</span>
+                <span style="color: var(--danger); font-size: 13px; font-weight: 700;">Severe</span>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="section-title"><i data-lucide="clipboard-list" style="width:18px; height: 18px;"></i> Recent Medical Reports</h3>
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+             <!-- report item -->
+             <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px; border: 1px solid var(--border-light); border-radius: 12px;">
+               <div style="display: flex; align-items: center; gap: 12px;">
+                 <div style="width: 40px; height: 40px; background: var(--primary-bg); color: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                   <i data-lucide="file-check" style="width: 20px; height: 20px;"></i>
+                 </div>
+                 <div>
+                   <div style="font-weight: 700;">Complete Blood Count (CBC)</div>
+                   <div style="font-size: 13px; color: var(--text-muted);">Ordered by Dr. Jenkins • 12 Oct 2025</div>
+                 </div>
+               </div>
+               <button type="button" class="btn btn-ghost" onclick="alert('Downloading report...')">
+                 <i data-lucide="download" style="width: 16px; height: 16px;"></i>
+               </button>
+             </div>
+             
+             <!-- report item -->
+             <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px; border: 1px solid var(--border-light); border-radius: 12px;">
+               <div style="display: flex; align-items: center; gap: 12px;">
+                 <div style="width: 40px; height: 40px; background: var(--primary-bg); color: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                   <i data-lucide="file-check" style="width: 20px; height: 20px;"></i>
+                 </div>
+                 <div>
+                   <div style="font-weight: 700;">Chest X-Ray Results</div>
+                   <div style="font-size: 13px; color: var(--text-muted);">Ordered by Riverside Medical • 05 Sep 2025</div>
+                 </div>
+               </div>
+               <button type="button" class="btn btn-ghost" onclick="alert('Downloading report...')">
+                 <i data-lucide="download" style="width: 16px; height: 16px;"></i>
+               </button>
+             </div>
+          </div>
+        </div>
+
+        <div class="profile-card">
+          <h3 class="section-title" style="color: var(--danger);"><i data-lucide="alert-triangle" style="width:18px; height: 18px;"></i> Danger Zone</h3>
+          <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 24px;">Sign out of your account on this device, or permanently delete your account data.</p>
+          
+          <div style="display: flex; gap: 16px;">
+            <button class="btn btn-ghost" style="border: 1px solid var(--border-light);" onclick="Auth.logout()">Log Out</button>
+            <button class="btn btn-ghost" style="color: var(--danger); background: var(--danger-bg);" onclick="alert('Delete account flow coming soon.')">Delete Account</button>
+          </div>
+        </div>
+
+      </main>
+    </div>
+    
+    <div id="layout-mobile-nav"></div>
+  </div>
+
+  <script src="../../js/auth.js"></script>
+  <script src="../../js/layout.js"></script>
+  <script src="../../js/pages/profile.js"></script>
+  
+</body>
+</html>

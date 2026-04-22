@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Appointments - HealthWaze Local</title>
+  
+  <link rel="stylesheet" href="../../css/main.css" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <style>
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    
+    .tabs {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border-light);
+      padding-bottom: 8px;
+    }
+    .tab {
+      padding: 8px 16px;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+    .tab.active {
+      color: var(--primary);
+      background: var(--primary-bg);
+    }
+    .tab:hover:not(.active) {
+      background: var(--bg-card);
+      color: var(--text-main);
+    }
+
+    .appointment-card {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 16px;
+      border-left: 4px solid var(--primary);
+    }
+    .appointment-card.past {
+      border-left-color: var(--text-muted);
+      opacity: 0.7;
+    }
+
+    .appt-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .appt-date {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--primary);
+      font-weight: 800;
+      font-size: 16px;
+    }
+
+    .past .appt-date {
+      color: var(--text-muted);
+    }
+
+    .appt-details {
+      display: flex;
+      gap: 24px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--border-light);
+    }
+
+    .appt-detail-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(26, 28, 30, 0.4);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 16px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .modal-overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-content {
+      background: var(--white);
+      border-radius: 24px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: var(--shadow-lg);
+      transform: translateY(20px);
+      transition: transform 0.2s;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      max-height: 90vh;
+    }
+    .modal-overlay.show .modal-content {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-body {
+      padding: 24px;
+      overflow-y: auto;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border-light);
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text-main);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <div id="layout-header"></div>
+    
+    <div class="main-grid">
+      <div id="layout-sidebar"></div>
+      
+      <main id="main-content">
+        
+        <div class="page-header">
+          <div>
+            <h1 style="font-size: 20px; font-weight: 700; margin-bottom: 4px;">My Appointments</h1>
+            <p style="color: var(--text-muted); font-size: 14px;">Manage your medical bookings.</p>
+          </div>
+          <button class="btn btn-primary" id="openBookingModalBtn">
+            <i data-lucide="plus" style="width: 16px; height: 16px;"></i> Book New
+          </button>
+        </div>
+
+        <div class="tabs" id="apptTabs">
+          <div class="tab active" data-view="upcoming">Upcoming</div>
+          <div class="tab" data-view="past">Past</div>
+        </div>
+
+        <div id="appointmentsFeed">
+          <!-- Populated dynamically via JS -->
+        </div>
+
+      </main>
+    </div>
+    
+    <div id="layout-mobile-nav"></div>
+  </div>
+
+  <!-- Booking Modal -->
+  <div id="bookingModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 style="font-size: 18px; font-weight: 700;">Book Appointment</h2>
+        <button class="btn btn-ghost" id="closeBookingModalBtn" style="padding: 8px; border-radius: 50%;">
+          <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+        </button>
+      </div>
+      
+      <form id="bookingForm" style="display: flex; flex-direction: column; flex: 1; min-height: 0;">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Select Clinic</label>
+            <select id="clinicSelect" class="input-field" required>
+              <option value="" disabled selected>Select a clinic...</option>
+              <!-- Populated by JS -->
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Healthcare Professional</label>
+            <select id="doctorSelect" class="input-field" required>
+              <option value="" disabled selected>Select a doctor...</option>
+              <option value="Dr. Jenkins">Dr. Jenkins</option>
+              <option value="Dr. Smith">Dr. Smith</option>
+              <option value="Dr. Evans">Dr. Evans</option>
+              <option value="Nurse Practitioner Sarah">Nurse Practitioner Sarah</option>
+            </select>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-group">
+              <label>Date</label>
+              <input type="date" id="dateSelect" class="input-field" required />
+            </div>
+            
+            <div class="form-group">
+              <label>Time</label>
+              <select id="timeSelect" class="input-field" required>
+                 <!-- Simple mock times -->
+                 <option value="" disabled selected>Select time...</option>
+                 <option value="09:00">09:00 AM</option>
+                 <option value="10:30">10:30 AM</option>
+                 <option value="13:15">01:15 PM</option>
+                 <option value="15:45">03:45 PM</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Reason for Visit (Brief)</label>
+            <textarea id="reasonSelect" class="input-field" rows="2" placeholder="E.g. Follow up on blood test..." required></textarea>
+          </div>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost" id="cancelBookingBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Confirm Booking</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="../../js/auth.js"></script>
+  <script src="../../js/mockData.js"></script>
+  <script src="../../js/layout.js"></script>
+  <script src="../../js/pages/appointments.js"></script>
+  
+</body>
+</html>
