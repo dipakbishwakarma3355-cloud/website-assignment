@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Doctor Dashboard - HealthWaze Local</title>
+  
+  <link rel="stylesheet" href="../../css/main.css" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+    
+    @media (max-width: 768px) {
+      .stats-grid { grid-template-columns: 1fr; }
+    }
+
+    .stat-card {
+      background: var(--white);
+      padding: 24px;
+      border-radius: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .stat-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .stat-label {
+      font-size: 14px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 24px;
+    }
+    
+    @media (max-width: 1000px) {
+      .dashboard-grid { grid-template-columns: 1fr; }
+    }
+
+    .section-card {
+      background: var(--white);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+    }
+
+    .section-header {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .patient-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .patient-item:last-child { border-bottom: none; }
+
+    .patient-info h4 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+    .patient-info p { font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+    
+    .status-badge {
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .status-waiting { background: var(--warning-bg); color: var(--warning); }
+    .status-in { background: var(--success-bg); color: var(--success); }
+
+    .action-btn {
+      width: 100%;
+      padding: 16px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      border-radius: 16px;
+      transition: all 0.2s;
+    }
+
+    .action-primary {
+      background: var(--primary);
+      color: white;
+    }
+    .action-primary:hover { background: var(--primary-hover); }
+
+    .action-danger {
+      background: var(--danger-bg);
+      color: var(--danger);
+    }
+    .action-danger:hover { background: rgba(255, 61, 0, 0.2); }
+
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <header class="top-header" style="background: var(--text-main);">
+        <div class="header-content">
+          <a href="#" class="logo-link">
+            <i data-lucide="stethoscope"></i>
+            <span>HealthWaze Professional</span>
+          </a>
+          <button class="btn btn-ghost" style="color: white; border: 1px solid rgba(255,255,255,0.2);" onclick="Auth.logout()">Log Out</button>
+        </div>
+    </header>
+    
+    <!-- We remove layout-sidebar for Doctor UI and just center the grid -->
+    <div class="main-grid" style="grid-template-columns: 1fr; max-width: 1100px;">
+      
+      <main id="main-content">
+        <h1 style="font-size: 24px; font-weight: 800; margin-bottom: 24px; display: flex; align-items: center; gap: 8px;">
+          <span id="docGreeting">Good Morning, Doctor</span>
+          <i data-lucide="check-circle" style="color: var(--success); width: 20px; height: 20px;"></i>
+        </h1>
+        
+        <!-- Stats Row -->
+        <div class="stats-grid">
+          <div class="stat-card">
+             <div class="stat-icon" style="background: rgba(45,91,255,0.1); color: var(--primary);">
+               <i data-lucide="users"></i>
+             </div>
+             <div>
+               <div class="stat-value" id="statPatients">24</div>
+               <div class="stat-label">Appointments Today</div>
+             </div>
+          </div>
+          <div class="stat-card">
+             <div class="stat-icon" style="background: var(--warning-bg); color: var(--warning);">
+               <i data-lucide="clock"></i>
+             </div>
+             <div>
+               <div class="stat-value" id="statWaitList">4</div>
+               <div class="stat-label">Waitlist Requests</div>
+             </div>
+          </div>
+          <div class="stat-card">
+             <div class="stat-icon" style="background: var(--success-bg); color: var(--success);">
+               <i data-lucide="activity"></i>
+             </div>
+             <div>
+               <div class="stat-value">Normal</div>
+               <div class="stat-label">Clinic Operating Status</div>
+             </div>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <!-- Appointments Schedule -->
+          <div class="section-card">
+            <div class="section-header">
+              <span>Today's Schedule</span>
+              <button class="btn btn-ghost" style="font-size: 13px; padding: 6px 12px; background: var(--bg-main);">View All</button>
+            </div>
+            
+            <div id="patientList">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- Quick Actions & Alerts -->
+          <div style="display: flex; flex-direction: column; gap: 24px;">
+            <div class="section-card">
+              <div class="section-header">Quick Actions</div>
+              <button class="action-btn action-primary" onclick="alert('Opening broadcast modal...')">
+                <i data-lucide="mic"></i> Broadcast Status Alert
+              </button>
+              <button class="action-btn action-primary" style="background: var(--bg-main); color: var(--text-main);" onclick="alert('Opening messages panel...')">
+                <i data-lucide="message-square"></i> Patient Messages (2 Unread)
+              </button>
+              <button class="action-btn action-danger" onclick="alert('Closing queue...')">
+                <i data-lucide="x-circle"></i> Pause Walk-Ins
+              </button>
+            </div>
+
+            <div class="section-card" style="background: var(--primary-bg); border: 1px solid rgba(45,91,255,0.2);">
+              <div class="section-header" style="color: var(--primary);">System Notice</div>
+              <p style="font-size: 14px; line-height: 1.5; color: var(--text-main);">
+                NHS API sync completed at 08:00 AM. All patient files for today's sessions are pre-loaded successfully.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="../../js/auth.js"></script>
+  <script src="../../js/pages/doctorDashboard.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Security Check
+      if (!Auth.requireAuth(['doctor'])) return;
+      DoctorDashboard.init();
+    });
+  </script>
+</body>
+</html>
